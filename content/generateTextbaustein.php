@@ -80,13 +80,8 @@ if($textbausteine->load($id))
 		$clientpfad=ADDON_TEXTBAUSTEINE_CLIENT_CSV_PFAD;
 		$csvname = uniqid().'.csv';
 
-		// CSV schreiben
-		if($fp = fopen($serverpfad.$csvname, 'w'))
+		if(mssafe_csv($serverpfad.$csvname, $data))
 		{
-			foreach ($data as $fields) 
-				fputcsv($fp, $fields);
-			fclose($fp);
-
 			// Dokument erstellen und ausliefern
 			generateDocument($textbausteine->pfad,$textbausteine->name,$clientpfad.$csvname);
 		}
@@ -103,6 +98,52 @@ if($textbausteine->load($id))
 else
 	echo 'Textbaustein nicht gefunden';
 
+// Erstellt eine CSV Datei die auch in MSOffice funktioniert
+function mssafe_csv($filepath, $data)
+{
+	if($fp = fopen($filepath, 'w')) 
+	{
+		reset($data);
+		$line = current($data);
+		if (!empty($line)) 
+		{
+			reset($line);
+			$first = current($line);
+			if (substr($first, 0, 2)=='ID' && !preg_match('/["\\s,]/', $first) ) 
+			{
+				array_shift($data);
+				array_shift($line);
+				if(empty($line)) 
+				{
+					fwrite($fp, "\"{$first}\"\r\n");
+				} 
+				else 
+				{
+					fwrite($fp, "\"{$first}\",");
+					fputcsv($fp, $line);
+					fseek($fp, -1, SEEK_CUR);
+					fwrite($fp, "\r\n");
+				}
+			}
+		}
+        
+        foreach ( $data as $line ) 
+		{
+            fputcsv($fp, $line);
+            fseek($fp, -1, SEEK_CUR);
+            fwrite($fp, "\r\n");
+        }
+        fclose($fp);
+    }
+	else 
+	{
+		return false;
+	}
+
+	return true;
+}
+
+// Ersetzt den Pfad zur Datenquelle im Dokument
 function generateDocument($pfad, $name, $csvpfad)
 {
 	// Temporaeren Ordner erstellen
