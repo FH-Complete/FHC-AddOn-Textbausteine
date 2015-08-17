@@ -26,9 +26,9 @@ require_once(dirname(__FILE__).'/../include/textbausteine.class.php');
 $textbausteine = new textbausteine();
 $textbausteine->getAll();
 ?>
-addon.push( 
+addon.push(
 {
-	init: function() 
+	init: function()
 	{
 		// Diese Funktion wird nach dem Laden des FAS aufgerufen
 
@@ -120,7 +120,7 @@ function AddonTextbausteineGenerate(id)
 		{
 	  		tree.view.selection.getRangeAt(t,start,end);
 			for (var v = start.value; v <= end.value; v++)
-			{			
+			{
 				prestudentid = prestudentid+';'+getTreeCellText(tree, 'student-treecol-prestudent_id', v);
 			}
 		}
@@ -149,11 +149,27 @@ function AddonTextbausteineGenerate(id)
 		}
 	}
 
+	// gewaehlten Studiengang / Semester
+	var tree = document.getElementById('tree-verband');
+	var studiengang_kz='';
+	var semester='';
+	if(tree.currentIndex!=-1)
+	{
+		//Studiengang und Semester holen
+		var col;
+		col = tree.columns ? tree.columns["stg_kz"] : "stg_kz";
+		studiengang_kz=tree.view.getCellText(tree.currentIndex,col);
+		col = tree.columns ? tree.columns["sem"] : "sem";
+		semester=tree.view.getCellText(tree.currentIndex,col);
+	}
+
 	newwindow= window.open ("","FAS","width=350, height=350");
-	newwindow.document.getElementsByTagName('body')[0].innerHTML = "<form id='postform-form' name='postfrm' action='' method='POST'><input type='hidden' id='postform-textbox-prestudent_id' name='prestudent_id' /><input type='hidden' id='postform-textbox-uid' name='uid' /><input type='hidden' id='postform-textbox-textbaustein_id' name='textbaustein_id' /></form>"; 
+	newwindow.document.getElementsByTagName('body')[0].innerHTML = "<form id='postform-form' name='postfrm' action='' method='POST'><input type='hidden' id='postform-textbox-prestudent_id' name='prestudent_id' /><input type='hidden' id='postform-textbox-uid' name='uid' /><input type='hidden' id='postform-textbox-textbaustein_id' name='textbaustein_id' /><input type='hidden' id='postform-textbox-studiengang_kz' name='studiengang_kz' /><input type='hidden' id='postform-textbox-semester' name='semester' /></form>";
 	newwindow.document.getElementById('postform-textbox-prestudent_id').value=prestudentid;
 	newwindow.document.getElementById('postform-textbox-uid').value=uid;
 	newwindow.document.getElementById('postform-textbox-textbaustein_id').value=id;
+	newwindow.document.getElementById('postform-textbox-studiengang_kz').value=studiengang_kz;
+	newwindow.document.getElementById('postform-textbox-semester').value=semester;
 	newwindow.document.getElementById('postform-form').action='<?php echo APP_ROOT.'/addons/textbausteine/content/generateTextbaustein.php';?>';
 	newwindow.document.postfrm.submit();
 }

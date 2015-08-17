@@ -36,6 +36,8 @@ if(!$rechte->isBerechtigt('addon/textbausteine'))
 $id = $_POST['textbaustein_id'];
 $prestudent_id = $_POST['prestudent_id'];
 $uid = $_POST['uid'];
+$studiengang_kz = $_POST['studiengang_kz'];
+$semester = $_POST['semester'];
 
 $prestudent_id_arr = explode(";",$prestudent_id);
 $uid_arr = explode(";",$uid);
@@ -54,6 +56,8 @@ if($textbausteine->load($id))
 	// Variablen ersetzen
 	$qry = str_replace('$prestudent_id',$db->db_implode4SQL($prestudent_id_arr),$qry);
 	$qry = str_replace('$uid',$db->db_implode4SQL($uid_arr),$qry);
+	$qry = str_replace('$studiengang_kz',$db->db_add_param($studiengang_kz),$qry);
+	$qry = str_replace('$semester',$db->db_add_param($semester),$qry);
 
 	if($result = $db->db_query($qry))
 	{
@@ -101,23 +105,23 @@ else
 // Erstellt eine CSV Datei die auch in MSOffice funktioniert
 function mssafe_csv($filepath, $data)
 {
-	if($fp = fopen($filepath, 'w')) 
+	if($fp = fopen($filepath, 'w'))
 	{
 		reset($data);
 		$line = current($data);
-		if (!empty($line)) 
+		if (!empty($line))
 		{
 			reset($line);
 			$first = current($line);
-			if (substr($first, 0, 2)=='ID' && !preg_match('/["\\s,]/', $first) ) 
+			if (substr($first, 0, 2)=='ID' && !preg_match('/["\\s,]/', $first) )
 			{
 				array_shift($data);
 				array_shift($line);
-				if(empty($line)) 
+				if(empty($line))
 				{
 					fwrite($fp, "\"{$first}\"\r\n");
-				} 
-				else 
+				}
+				else
 				{
 					fwrite($fp, "\"{$first}\",");
 					fputcsv($fp, $line);
@@ -126,8 +130,8 @@ function mssafe_csv($filepath, $data)
 				}
 			}
 		}
-        
-        foreach ( $data as $line ) 
+
+        foreach ( $data as $line )
 		{
             fputcsv($fp, $line);
             fseek($fp, -1, SEEK_CUR);
@@ -135,7 +139,7 @@ function mssafe_csv($filepath, $data)
         }
         fclose($fp);
     }
-	else 
+	else
 	{
 		return false;
 	}
@@ -168,7 +172,7 @@ function generateDocument($pfad, $name, $csvpfad)
 		$xml = new DOMDocument;
 		if(!$xml->load($tempfolder.'/word/settings.xml'))
 			die('unable to load settings.xml');
-			
+
 		$elements = $xml->getElementsByTagName('query');
 	    $element = $elements->item(0);
    		$newelement = $xml->createElement('w:query');
@@ -182,7 +186,7 @@ function generateDocument($pfad, $name, $csvpfad)
 		$xml = new DOMDocument;
 		if(!$xml->load($tempfolder.'/word/_rels/settings.xml.rels'))
 			die('unable to load settings.xml.rels');
-			
+
 		$elements = $xml->getElementsByTagName('Relationship');
 	    $element = $elements->item(0);
 		$element->setAttribute('Target',$csvpfad);
@@ -194,13 +198,13 @@ function generateDocument($pfad, $name, $csvpfad)
 
 		// Ausliefern
 
-		$fsize = filesize($name); 
+		$fsize = filesize($name);
 		$handle = fopen($name,'r');
 		header('Content-type: application/vnd.ms-word');
 		header('Content-Disposition: attachment; filename="'.$name.'"');
 		header('Content-Length: '.$fsize);
 
-	    while (!feof($handle)) 
+	    while (!feof($handle))
 	    {
 		  	echo fread($handle, 8192);
 		}
