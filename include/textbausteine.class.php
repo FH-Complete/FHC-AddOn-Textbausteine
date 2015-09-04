@@ -22,8 +22,8 @@ require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 class textbausteine extends basis_db
 {
 	public $new;				//  boolean
-	public $result = array();	//  adresse Objekt
-	public $gruppen = array();	//  adresse Objekt
+	public $result = array();	//  result Objekt
+	public $textbausteine = array();
 
 	//Tabellenspalten
 	public $textbausteine_id; //  integer
@@ -43,7 +43,7 @@ class textbausteine extends basis_db
 	public function __construct($textbausteine_id=null)
 	{
 		parent::__construct();
-		
+
 		if(!is_null($textbausteine_id))
 			$this->load($textbausteine_id);
 	}
@@ -100,7 +100,7 @@ class textbausteine extends basis_db
 	public function getAll()
 	{
 		$qry = "SELECT * FROM addon.tbl_textbausteine ORDER BY gruppe, bezeichnung";
-		
+
 		if($result = $this->db_query($qry))
 		{
 			while($row = $this->db_fetch_object($result))
