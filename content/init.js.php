@@ -163,13 +163,16 @@ function AddonTextbausteineGenerate(id)
 		semester=tree.view.getCellText(tree.currentIndex,col);
 	}
 
+	var studiensemester_kurzbz = getStudiensemester();
+
 	newwindow= window.open ("","FAS","width=350, height=350");
-	newwindow.document.getElementsByTagName('body')[0].innerHTML = "<form id='postform-form' name='postfrm' action='' method='POST'><input type='hidden' id='postform-textbox-prestudent_id' name='prestudent_id' /><input type='hidden' id='postform-textbox-uid' name='uid' /><input type='hidden' id='postform-textbox-textbaustein_id' name='textbaustein_id' /><input type='hidden' id='postform-textbox-studiengang_kz' name='studiengang_kz' /><input type='hidden' id='postform-textbox-semester' name='semester' /></form>";
+	newwindow.document.getElementsByTagName('body')[0].innerHTML = "<form id='postform-form' name='postfrm' action='' method='POST'><input type='hidden' id='postform-textbox-prestudent_id' name='prestudent_id' /><input type='hidden' id='postform-textbox-uid' name='uid' /><input type='hidden' id='postform-textbox-textbaustein_id' name='textbaustein_id' /><input type='hidden' id='postform-textbox-studiengang_kz' name='studiengang_kz' /><input type='hidden' id='postform-textbox-semester' name='semester' /><input type='hidden' id='postform-textbox-studiensemester_kurzbz' name='studiensemester_kurzbz' /></form>";
 	newwindow.document.getElementById('postform-textbox-prestudent_id').value=prestudentid;
 	newwindow.document.getElementById('postform-textbox-uid').value=uid;
 	newwindow.document.getElementById('postform-textbox-textbaustein_id').value=id;
 	newwindow.document.getElementById('postform-textbox-studiengang_kz').value=studiengang_kz;
 	newwindow.document.getElementById('postform-textbox-semester').value=semester;
+	newwindow.document.getElementById('postform-textbox-studiensemester_kurzbz').value=studiensemester_kurzbz;
 	newwindow.document.getElementById('postform-form').action='<?php echo APP_ROOT.'/addons/textbausteine/content/generateTextbaustein.php';?>';
 	newwindow.document.postfrm.submit();
 }

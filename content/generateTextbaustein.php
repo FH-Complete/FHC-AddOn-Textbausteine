@@ -38,6 +38,7 @@ $prestudent_id = $_POST['prestudent_id'];
 $uid = $_POST['uid'];
 $studiengang_kz = $_POST['studiengang_kz'];
 $semester = $_POST['semester'];
+$studiensemester_kurzbz = $_POST['studiensemester_kurzbz'];
 
 $prestudent_id_arr = explode(";",$prestudent_id);
 $uid_arr = explode(";",$uid);
@@ -58,6 +59,7 @@ if($textbausteine->load($id))
 	$qry = str_replace('$uid',$db->db_implode4SQL($uid_arr),$qry);
 	$qry = str_replace('$studiengang_kz',$db->db_add_param($studiengang_kz),$qry);
 	$qry = str_replace('$semester',$db->db_add_param($semester),$qry);
+	$qry = str_replace('$studiensemester_kurzbz',$db->db_add_param($studiensemester_kurzbz),$qry);
 
 	if($result = $db->db_query($qry))
 	{
