@@ -120,8 +120,11 @@ function AddonTextbausteineGenerate(id)
 		{
 	  		tree.view.selection.getRangeAt(t,start,end);
 			for (var v = start.value; v <= end.value; v++)
-			{
-				prestudentid = prestudentid+';'+getTreeCellText(tree, 'student-treecol-prestudent_id', v);
+			{			
+				if(prestudentid!='')
+					prestudentid = prestudentid+';'+getTreeCellText(tree, 'student-treecol-prestudent_id', v);
+				else
+					prestudentid = getTreeCellText(tree, 'student-treecol-prestudent_id', v);
 			}
 		}
 
